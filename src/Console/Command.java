@@ -11,8 +11,8 @@ public class Command {
             "add-library", "LibraryController"
     );
     private Scanner input;
-    private String action;
-    private ArrayList<String> args;
+    private static String action;
+    private static ArrayList<String> args;
 
     private boolean hasNext = false;
 
@@ -30,7 +30,7 @@ public class Command {
             String[] actionArgs = rawCmd.split("#");
             action = actionArgs[0];
             if (actionArgs.length > 1) {
-                Collections.addAll(this.args, actionArgs[1].split("\\|"));
+                Collections.addAll(args, actionArgs[1].split("\\|"));
             }
             if(action.equals("finish")){
                 hasNext = false;
@@ -42,12 +42,12 @@ public class Command {
         if(!hasNext()){
             return;
         }
-        String parsedAction = parseAction(this.action);
+        String parsedAction = parseAction("action-"+action);
         String className = routes.get(action);
         Class<? extends String> controller = className.getClass();
-        Method actionMethod = controller.getMethod(parsedAction, ArrayList.class);
+        Method actionMethod = controller.getMethod("runAction", String.class);
         Object controllerInstance = controller.getDeclaredConstructor().newInstance();
-        Response response = (Response) actionMethod.invoke(controllerInstance, args);
+        Response response = (Response) actionMethod.invoke(controllerInstance, parsedAction);
         System.out.println(response);
     }
 
@@ -59,5 +59,13 @@ public class Command {
             builder.setCharAt(index, Character.toUpperCase(builder.charAt(index)));
         }
         return builder.toString();
+    }
+
+    public static String getAction() {
+        return action;
+    }
+
+    public static ArrayList<String> getArgs() {
+        return args;
     }
 }
