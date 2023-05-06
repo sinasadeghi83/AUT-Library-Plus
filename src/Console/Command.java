@@ -42,7 +42,7 @@ public class Command {
         if(!hasNext()){
             return;
         }
-        String parsedAction = this.parseAction();
+        String parsedAction = parseAction(this.action);
         String className = routes.get(action);
         Class<? extends String> controller = className.getClass();
         Method actionMethod = controller.getMethod(parsedAction, ArrayList.class);
@@ -51,7 +51,7 @@ public class Command {
         System.out.println(response);
     }
 
-    private String parseAction() {
+    public static String parseAction(String action) {
         StringBuilder builder = new StringBuilder(action);
         int index;
         while ((index = builder.indexOf("-")) != -1){

@@ -1,11 +1,15 @@
 package Components;
 
+import Console.Command;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class Model {
@@ -30,9 +34,9 @@ public abstract class Model {
         errors = new HashMap<String, String>();
     }
 
-    public String getName(){
-        return this.getClass().getName();
-    }
+    public static String getName(Class classObj){
+        return classObj.getName();
+    };
 
     public boolean save(){
         if(!this.validate()){
@@ -40,6 +44,28 @@ public abstract class Model {
         }
         Database.save(this);
         return true;
+    }
+
+    public static List<Model> find(Class classObj, Map<String, Object> where) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        HashMap<String, Model> models = Database.find(Model.getName(classObj));
+        List<Model> result = new ArrayList<>();
+        for (Model model :
+                models.values()) {
+            boolean isGood = true;
+            for(String fieldName :
+                    where.keySet()){
+                Method getter = classObj.getMethod(Command.parseAction("get-" + fieldName));
+                Object fieldValue = getter.invoke(model);
+                if(!fieldValue.equals(where.get(fieldName))){
+                    isGood = false;
+                    break;
+                }
+            }
+            if(isGood){
+                result.add(model);
+            }
+        }
+        return result;
     }
 
     private void checkRules() throws NoSuchFieldException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -57,13 +83,13 @@ public abstract class Model {
     }
 
     private void checkRequired(Field field) throws IllegalAccessException {
-        if(field.get(field.getType()) == null){
+        if(field.get(this) == null){
             this.addError(field.getName(), REQUIRED_ERR);
         }
     }
 
-    private void checkDate(Field field){
-        String dateStr = field.getClass().toString();
+    private void checkDate(Field field) throws IllegalAccessException {
+        String dateStr = (String) field.get(this);
         if(!isValidDate(dateStr)) {
             this.addError(field.getName(), DATE_ERR);
         }
@@ -95,5 +121,9 @@ public abstract class Model {
 
     private void addError(String field, String error) {
         errors.put(field, error);
+    }
+
+    public Map<String, String> getErrors() {
+        return errors;
     }
 }
