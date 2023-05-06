@@ -3,10 +3,8 @@ package Components;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,12 +12,34 @@ public abstract class Model {
     private static final String REQUIRED_ERR = "This field is required:";
     private static final String DATE_ERR = "This field should be Date:";
 
-    //Field's name
+    protected String id;
+
+    //Field's name -> error message
     protected Map<String, String> errors;
     public abstract Map<String, String[]> rules();
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public Model(){
         errors = new HashMap<String, String>();
+    }
+
+    public String getName(){
+        return this.getClass().getName();
+    }
+
+    public boolean save(){
+        if(!this.validate()){
+            return false;
+        }
+        Database.save(this);
+        return true;
     }
 
     private void checkRules() throws NoSuchFieldException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
