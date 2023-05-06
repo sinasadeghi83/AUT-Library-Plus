@@ -23,6 +23,7 @@ public abstract class Model {
     }
 
     private void checkRules() throws NoSuchFieldException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        errors.clear();
         Map<String, String[]> rules = this.rules();
         for (String fieldName :
                 rules.keySet()) {
