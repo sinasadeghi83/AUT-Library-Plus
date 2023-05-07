@@ -10,33 +10,59 @@ import java.util.List;
 import java.util.Map;
 
 public class AuthManager {
-    private static Auth auth = null;
+    private Auth auth = null;
     //User id -> roles
-    private static final Map<String, List<String>> usersRoles = new HashMap<>();
+    private Map<String, List<String>> usersRoles;
+    //Roles -> permissions
+    private Map<String, List<String>> rolesPerms;
 
-    public static String getUserId(){
+    public AuthManager(){
+        usersRoles = Map.of(
+                "admin", List.of("admin")
+        );
+
+        rolesPerms = Map.of(
+                "admin", List.of("addLibrary")
+        );
+    }
+
+    public String getUserId(){
         return auth.getId();
     }
 
-    public static Auth identity() throws NotAuthenticatedException {
+    public Auth identity() throws NotAuthenticatedException {
         return auth.identity();
     }
 
-    public static boolean authorise(List<String> roles) throws NotAuthenticatedException {
-        List<String> userRoles = usersRoles.get(AuthManager.getUserId());
-        for (String role :
-                roles) {
-            if(userRoles.contains(role)){
+    public boolean authorise(List<String> rolesPerms) throws NotAuthenticatedException {
+        List<String> userRoles = usersRoles.get(this.getUserId());
+        for(String rolePerm:
+                rolesPerms){
+            if(userRoles.contains(rolePerm)){
+                return true;
+            }
+
+            if(this.can(rolePerm)){
                 return true;
             }
         }
+        return false;
+    }
 
+    public boolean can(String perm){
+        List<String> userRoles = usersRoles.get(this.getUserId());
+        for (String userRole :
+                userRoles) {
+            List<String> perms = this.rolesPerms.get(userRole);
+            if (perms.contains(perm))
+                return true;
+        }
         return false;
     }
 
 
 
-    public static void authenticate(Auth auth) throws ModelNotFoundException, InvalidPasswordException {
-        AuthManager.auth = auth.authenticate();
+    public void authenticate(Auth auth) throws ModelNotFoundException, InvalidPasswordException {
+        this.auth = auth.authenticate();
     }
 }

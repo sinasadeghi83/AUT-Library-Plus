@@ -1,6 +1,7 @@
 package Components;
 
 import Console.Command;
+import Main.App;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -42,12 +43,12 @@ public abstract class Model {
         if(!this.validate()){
             return false;
         }
-        Database.save(this);
+        App.getDb().save(this);
         return true;
     }
 
     public static List<Model> find(Class classObj, Map<String, Object> where) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        HashMap<String, Model> models = Database.find(Model.getName(classObj));
+        HashMap<String, Model> models = App.getDb().find(Model.getName(classObj));
         List<Model> result = new ArrayList<>();
         for (Model model :
                 models.values()) {

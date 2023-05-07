@@ -29,15 +29,15 @@ public abstract class BaseController {
             User user = new User();
             user.setId(App.getArgs().get(0));
             user.setPassword(App.getArgs().get(1));
-            AuthManager.authenticate(user);
+            App.getAuthManager().authenticate(user);
             checkAccessControl(action);
         } catch (Exception e) {
             return new Response(e.getMessage());
         }
         Method method = null;
         try {
-            method = this.getClass().getMethod(action);
-            return (Response) method.invoke(this);
+            method = this.getClass().getMethod(action, List.class);
+            return (Response) method.invoke(this, App.getArgs().subList(2, App.getArgs().size()));
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
@@ -45,8 +45,8 @@ public abstract class BaseController {
 
     private void checkAccessControl(String action) throws NotAuthenticatedException, NotAuthorisedException {
         Map<String, List<String>> access = accessControl();
-        List<String> roles = access.get(action);
-        if(!AuthManager.authorise(roles)){
+        List<String> rolesPerms = access.get(action);
+        if(!App.getAuthManager().authorise(rolesPerms)){
             throw new NotAuthorisedException();
         }
     }

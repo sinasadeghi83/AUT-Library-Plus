@@ -33,12 +33,10 @@ public class User extends Model implements Auth {
         List<Model> models;
         try {
             models = User.find(User.class, Map.of(
-                    "id", this.getId(),
-                    "password", password
+                    "id", this.getId()
             ));
 
         } catch (Exception e) {
-            System.err.println(e.getMessage());
             throw new RuntimeException(e);
         }
         if(models.size() == 0)
