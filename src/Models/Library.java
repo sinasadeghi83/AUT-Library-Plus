@@ -16,7 +16,7 @@ public class Library extends Model {
         return Map.of(
                 "id", new String[]{ "Required", "Unique" },
                 "name", new String[]{ "Required" },
-                "foundDate", new String[]{ "Required", "Date" },
+                "foundDate", new String[]{ "Required", "Year" },
                 "tableCount", new String[]{ "Required" },
                 "address", new String[]{ "Required" }
         );

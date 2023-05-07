@@ -11,6 +11,20 @@ import java.util.Map;
 public class User extends Model implements Auth {
     private String password, firstName, lastName, nationalCode, birthdate, address;
 
+    public User(){
+        super();
+    }
+
+    public User(String id, String password, String firstName, String lastName, String nationalCode, String birthdate, String address) {
+        super.id = id;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.nationalCode = nationalCode;
+        this.birthdate = birthdate;
+        this.address = address;
+    }
+
     public Map<String, String[]> rules(){
         return Map.of(
                 "id", new String[]{ "Required", "Unique" },
@@ -18,7 +32,7 @@ public class User extends Model implements Auth {
                 "firstName", new String[]{"Required"},
                 "lastName", new String[]{"Required"},
                 "nationalCode", new String[]{"Required"},
-                "birthdate", new String[]{ "Required", "Date" },
+                "birthdate", new String[]{ "Required", "Year" },
                 "address", new String[]{ "Required" }
         );
     }
