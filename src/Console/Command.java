@@ -14,10 +14,11 @@ public class Command {
     private static String action;
     private static ArrayList<String> args;
 
-    private boolean hasNext = false;
+    private boolean hasNext = true;
 
     public Command(Scanner input){
         this.input = input;
+        args = new ArrayList<>();
     }
 
     public boolean hasNext() {
@@ -29,6 +30,7 @@ public class Command {
             String rawCmd = input.nextLine();
             String[] actionArgs = rawCmd.split("#");
             action = actionArgs[0];
+            args.clear();
             if (actionArgs.length > 1) {
                 Collections.addAll(args, actionArgs[1].split("\\|"));
             }
@@ -38,13 +40,13 @@ public class Command {
         }
     }
 
-    public void run() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+    public void run() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException, ClassNotFoundException {
         if(!hasNext()){
             return;
         }
         String parsedAction = parseAction("action-"+action);
-        String className = routes.get(action);
-        Class<? extends String> controller = className.getClass();
+        String className = "Controllers." + routes.get(action);
+        Class<?> controller = Class.forName(className);
         Method actionMethod = controller.getMethod("runAction", String.class);
         Object controllerInstance = controller.getDeclaredConstructor().newInstance();
         Response response = (Response) actionMethod.invoke(controllerInstance, parsedAction);
