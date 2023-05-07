@@ -76,20 +76,21 @@ public abstract class Model {
                 rules.keySet()) {
             for (String condition:
                     rules.get(fieldName)) {
-                Field field = this.getClass().getField(fieldName);
-                Method evalCondition = Model.class.getMethod("eval"+condition, Field.class);
+                Field field = getFieldUpTo(this.getClass(), null, fieldName);
+                Method evalCondition = Model.class.getDeclaredMethod("eval"+condition, Field.class);
+                field.setAccessible(true);
                 evalCondition.invoke(this, field);
             }
         }
     }
 
-    private void checkRequired(Field field) throws IllegalAccessException {
+    private void evalRequired(Field field) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         if(field.get(this) == null){
             this.addError(field.getName(), REQUIRED_ERR);
         }
     }
 
-    private void checkDate(Field field) throws IllegalAccessException {
+    private void evalDate(Field field) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         String dateStr = (String) field.get(this);
         if(!isValidDate(dateStr)) {
             this.addError(field.getName(), DATE_ERR);
@@ -97,21 +98,27 @@ public abstract class Model {
     }
 
     //TODO
-    private void checkUnique(Field field){
+    private void evalUnique(Field field){
+    }
+
+    private Object getFieldByGetter(Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method getter = this.getClass().getDeclaredMethod(Command.parseAction("get-" + field.getName()));
+        return getter.invoke(this);
     }
 
     public boolean validate(){
         try {
             this.checkRules();
         } catch (Exception e) {
+            System.out.println(e);
             this.addError(null, e.getMessage());
         }
-        return errors.size() > 0;
+        return errors.size() == 0;
     }
 
     private boolean isValidDate(String inDate) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss:ms");
-        dateFormat.setLenient(false);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:ms");
+        dateFormat.setLenient(true);
         try {
             dateFormat.parse(inDate.trim());
         } catch (ParseException pe) {
@@ -122,6 +129,44 @@ public abstract class Model {
 
     private void addError(String field, String error) {
         errors.put(field, error);
+    }
+
+    /*
+    Thanks to John B
+    Reference: https://stackoverflow.com/questions/16966629/what-is-the-difference-between-getfields-and-getdeclaredfields-in-java-reflectio
+     */
+    private Iterable<Field> getFieldsUpTo(Class<?> startClass,
+                                                Class<?> exclusiveParent) {
+        List<Field> currentClassFields = new ArrayList<Field>(List.of(startClass.getDeclaredFields()));
+        Class<?> parentClass = startClass.getSuperclass();
+
+        if (parentClass != null &&
+                (exclusiveParent == null || !(parentClass.equals(exclusiveParent)))) {
+            List<Field> parentClassFields =
+                    (List<Field>) getFieldsUpTo(parentClass, exclusiveParent);
+            currentClassFields.addAll(parentClassFields);
+        }
+
+        return currentClassFields;
+    }
+
+    private Field getFieldUpTo(Class<?> startClass,
+                                          Class<?> exclusiveParent, String name) {
+        Field field;
+        try {
+            field = startClass.getDeclaredField(name);
+        }catch (NoSuchFieldException e) {
+            Class<?> parentClass = startClass.getSuperclass();
+
+            if (parentClass != null &&
+                    (exclusiveParent == null || !(parentClass.equals(exclusiveParent)))) {
+                field = getFieldUpTo(parentClass, exclusiveParent, name);
+            }else{
+                field = null;
+            }
+        }
+
+        return field;
     }
 
     public Map<String, String> getErrors() {
