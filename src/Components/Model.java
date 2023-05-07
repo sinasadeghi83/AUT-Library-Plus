@@ -16,6 +16,7 @@ import java.util.Map;
 public abstract class Model {
     private static final String REQUIRED_ERR = "This field is required:";
     private static final String DATE_ERR = "This field should be Date:";
+    private static final String YEAR_ERR = "This field should be Year:";
 
     protected String id;
 
@@ -94,6 +95,15 @@ public abstract class Model {
         String dateStr = (String) field.get(this);
         if(!isValidDate(dateStr)) {
             this.addError(field.getName(), DATE_ERR);
+        }
+    }
+
+    private void evalYear(Field field) throws IllegalAccessException {
+        String yearStr = (String) field.get(this);
+        try {
+            new SimpleDateFormat("yyyy").parse(yearStr);
+        } catch (ParseException e) {
+            this.addError(field.getName(), YEAR_ERR);
         }
     }
 
