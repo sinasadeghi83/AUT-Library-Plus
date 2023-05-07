@@ -26,9 +26,7 @@ public class App {
 
     private static void setupApp() {
         db = new Database();
-        User admin = new User();
-        admin.setId("admin");
-        admin.setPassword("AdminPass");
+        User admin = new User("admin", "AdminPass", "Admin", "Adminzadeh", "123456", "1348", "");
         admin.save();
     }
 
