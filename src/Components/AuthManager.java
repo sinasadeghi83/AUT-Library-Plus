@@ -5,6 +5,7 @@ import Exceptions.ModelNotFoundException;
 import Exceptions.NotAuthenticatedException;
 import Models.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,14 @@ public class AuthManager {
         return auth.identity();
     }
 
+    public void assignRole(Auth auth, String role){
+        List<String> userRoles = this.usersRoles.computeIfAbsent(auth.getId(), k -> new ArrayList<>());
+        userRoles.add(role);
+        if(!rolesPerms.containsKey(role)){
+            rolesPerms.put(role, new ArrayList<>());
+        }
+    }
+
     public boolean authorise(List<String> rolesPerms) throws NotAuthenticatedException {
         List<String> userRoles = usersRoles.get(this.getUserId());
         for(String rolePerm:
@@ -59,8 +68,6 @@ public class AuthManager {
         }
         return false;
     }
-
-
 
     public void authenticate(Auth auth) throws ModelNotFoundException, InvalidPasswordException {
         this.auth = auth.authenticate();
