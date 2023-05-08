@@ -4,6 +4,7 @@ import Exceptions.InvalidPasswordException;
 import Exceptions.ModelNotFoundException;
 import Exceptions.NotAuthenticatedException;
 import Models.User;
+import Rbac.RbacConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,15 +17,13 @@ public class AuthManager {
     private Map<String, List<String>> usersRoles;
     //Roles -> permissions
     private Map<String, List<String>> rolesPerms;
+    //Permssion -> Rule
+    private Map<String, Rule> permsRule;
 
     public AuthManager(){
-        usersRoles = new HashMap<>(Map.of(
-                "admin", List.of("admin")
-        ));
-
-        rolesPerms = new HashMap<>(Map.of(
-                "admin", List.of("addLibrary")
-        ));
+        usersRoles = RbacConfig.getUsersRoles();
+        rolesPerms = RbacConfig.getRolesPerms();
+        permsRule = RbacConfig.getPermsRule();
     }
 
     public String getUserId(){
@@ -36,12 +35,12 @@ public class AuthManager {
     }
 
     public void assignRole(Auth auth, String role){
-//        List<String> userRoles = this.usersRoles.computeIfAbsent(auth.getId(), k -> new ArrayList<>());
-        List<String> userRoles = this.usersRoles.get(auth.getId());
-        if(userRoles == null){
-            userRoles = new ArrayList<>();
-            this.usersRoles.put(auth.getId(), userRoles);
-        }
+        List<String> userRoles = this.usersRoles.computeIfAbsent(auth.getId(), k -> new ArrayList<>());
+//        List<String> userRoles = this.usersRoles.get(auth.getId());
+//        if(userRoles == null){
+//            userRoles = new ArrayList<>();
+//            this.usersRoles.put(auth.getId(), userRoles);
+//        }
         userRoles.add(role);
         if(!rolesPerms.containsKey(role)){
             rolesPerms.put(role, new ArrayList<>());
@@ -58,7 +57,6 @@ public class AuthManager {
             if(userRoles.contains(rolePerm)){
                 return true;
             }
-
             if(this.can(rolePerm)){
                 return true;
             }
@@ -67,12 +65,21 @@ public class AuthManager {
     }
 
     public boolean can(String perm){
+        return this.can(perm, new HashMap<>());
+    }
+
+    public boolean can(String perm, HashMap<String, Object> params){
         List<String> userRoles = usersRoles.get(this.getUserId());
         for (String userRole :
                 userRoles) {
             List<String> perms = this.rolesPerms.get(userRole);
-            if (perms.contains(perm))
+            if (perms.contains(perm)) {
+                if(permsRule.containsKey(perm)) {
+                    Rule rule = permsRule.get(perm);
+                    return rule.execute(this.auth, perm, params);
+                }
                 return true;
+            }
         }
         return false;
     }
