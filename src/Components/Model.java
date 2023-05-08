@@ -41,11 +41,16 @@ public abstract class Model {
         return classObj.getName();
     };
 
+    protected void beforeSave(){};
+    protected void afterSave(){};
+
     public boolean save(){
+        this.beforeSave();
         if(!this.validate()){
             return false;
         }
         App.getDb().save(this);
+        afterSave();
         return true;
     }
 
