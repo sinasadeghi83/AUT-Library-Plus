@@ -10,7 +10,8 @@ public class Command {
     private final Map<String, String> routes = Map.of(
             "add-library", "LibraryController",
             "add-category", "CategoryController",
-            "add-student", "UserController"
+            "add-student", "UserController",
+            "add-staff", "UserController"
     );
     private Scanner input;
     private static String action;
