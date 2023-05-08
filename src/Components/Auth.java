@@ -12,6 +12,7 @@ public interface Auth {
     public String getId();
     public void setId(String id);
     public void enterPassword(String password);
+    public String getPassword();
     public Auth identity() throws NotAuthenticatedException;
     public Auth authenticate() throws InvalidPasswordException, ModelNotFoundException;
 }

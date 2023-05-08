@@ -10,7 +10,7 @@ public class Database {
         this.models = new HashMap<>();
     }
     public void save(Model model){
-        String modelName = Model.getName(model.getClass());
+        String modelName = model.getMapName();
         HashMap<String, Model> myModels = models.computeIfAbsent(modelName, k -> new HashMap<>());
         myModels.put(model.getId(), model);
     }

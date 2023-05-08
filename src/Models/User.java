@@ -5,11 +5,12 @@ import Components.Model;
 import Exceptions.InvalidPasswordException;
 import Exceptions.ModelNotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class User extends Model implements Auth {
-    private String password, firstName, lastName, nationalCode, birthdate, address;
+    protected String password, firstName, lastName, nationalCode, birthdate, address;
 
     public User(){
         super();
@@ -39,28 +40,42 @@ public class User extends Model implements Auth {
     }
 
     @Override
+    public String getMapName(){
+        return Auth.class.getName();
+    }
+
+    public static List<User> find(Map<String, Object> where){
+        List<Model> models;
+        List<User> users = new ArrayList<>();
+        try {
+            models = Model.find(Auth.class, where);
+            for (Model model :
+                    models) {
+                users.add((User) model);
+            }
+            return users;
+        } catch (Exception e) {
+            return users;
+        }
+    }
+
+    @Override
     public User identity() {
         return this;
     }
 
     @Override
     public Auth authenticate() throws InvalidPasswordException, ModelNotFoundException {
-        List<Model> models;
-        try {
-            models = User.find(User.class, Map.of(
-                    "id", this.getId()
-            ));
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        List<User> models = this.find(Map.of(
+                "id", this.getId()
+        ));
         if(models.size() == 0)
             throw new ModelNotFoundException();
-        User user = (User)models.get(0);
-        if(!user.getPassword().equals(this.password)){
+        Auth auth = models.get(0);
+        if(!auth.getPassword().equals(this.password)){
             throw new InvalidPasswordException();
         }
-        return user;
+        return auth;
     }
 
     @Override

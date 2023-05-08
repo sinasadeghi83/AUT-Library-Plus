@@ -18,13 +18,13 @@ public class AuthManager {
     private Map<String, List<String>> rolesPerms;
 
     public AuthManager(){
-        usersRoles = Map.of(
+        usersRoles = new HashMap<>(Map.of(
                 "admin", List.of("admin")
-        );
+        ));
 
-        rolesPerms = Map.of(
+        rolesPerms = new HashMap<>(Map.of(
                 "admin", List.of("addLibrary")
-        );
+        ));
     }
 
     public String getUserId(){
@@ -36,7 +36,12 @@ public class AuthManager {
     }
 
     public void assignRole(Auth auth, String role){
-        List<String> userRoles = this.usersRoles.computeIfAbsent(auth.getId(), k -> new ArrayList<>());
+//        List<String> userRoles = this.usersRoles.computeIfAbsent(auth.getId(), k -> new ArrayList<>());
+        List<String> userRoles = this.usersRoles.get(auth.getId());
+        if(userRoles == null){
+            userRoles = new ArrayList<>();
+            this.usersRoles.put(auth.getId(), userRoles);
+        }
         userRoles.add(role);
         if(!rolesPerms.containsKey(role)){
             rolesPerms.put(role, new ArrayList<>());
@@ -45,6 +50,9 @@ public class AuthManager {
 
     public boolean authorise(List<String> rolesPerms) throws NotAuthenticatedException {
         List<String> userRoles = usersRoles.get(this.getUserId());
+        if(userRoles == null){
+            return false;
+        }
         for(String rolePerm:
                 rolesPerms){
             if(userRoles.contains(rolePerm)){
