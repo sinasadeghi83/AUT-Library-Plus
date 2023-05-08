@@ -71,7 +71,7 @@ public abstract class Model {
         return result;
     }
 
-    private void checkRules() throws NoSuchFieldException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    private void checkRules() throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         errors.clear();
         Map<String, String[]> rules = this.rules();
         for (String fieldName :
@@ -79,7 +79,7 @@ public abstract class Model {
             for (String condition:
                     rules.get(fieldName)) {
                 Field field = getFieldUpTo(this.getClass(), null, fieldName);
-                Method evalCondition = Model.class.getDeclaredMethod("eval"+condition, Field.class);
+                Method evalCondition = getMethodUpTo(this.getClass(), null, "eval"+condition, Field.class);
                 field.setAccessible(true);
                 evalCondition.invoke(this, field);
             }
@@ -141,7 +141,7 @@ public abstract class Model {
         return true;
     }
 
-    private void addError(String field, String error) {
+    protected void addError(String field, String error) {
         errors.put(field, error);
     }
 
@@ -166,7 +166,7 @@ public abstract class Model {
 
     private Field getFieldUpTo(Class<?> startClass,
                                           Class<?> exclusiveParent, String name) {
-        Field field;
+        Field field = null;
         try {
             field = startClass.getDeclaredField(name);
         }catch (NoSuchFieldException e) {
@@ -175,12 +175,23 @@ public abstract class Model {
             if (parentClass != null &&
                     (exclusiveParent == null || !(parentClass.equals(exclusiveParent)))) {
                 field = getFieldUpTo(parentClass, exclusiveParent, name);
-            }else{
-                field = null;
             }
         }
 
         return field;
+    }
+
+    private Method getMethodUpTo(Class<?> startClass, Class<?> exclusiveParent, String name, Class<?>... args) {
+        Method method = null;
+        try {
+            method = startClass.getDeclaredMethod(name, args);
+        } catch (NoSuchMethodException e) {
+            Class<?> parentClass = startClass.getSuperclass();
+            if(parentClass != null && (exclusiveParent == null || !(parentClass.equals(exclusiveParent)))){
+                method = getMethodUpTo(parentClass, exclusiveParent, name, args);
+            }
+        }
+        return method;
     }
 
     public Map<String, String> getErrors() {
