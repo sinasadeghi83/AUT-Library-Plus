@@ -9,7 +9,8 @@ import java.util.*;
 public class Command {
     private final Map<String, String> routes = Map.of(
             "add-library", "LibraryController",
-            "add-category", "CategoryController"
+            "add-category", "CategoryController",
+            "add-student", "UserController"
     );
     private Scanner input;
     private static String action;
