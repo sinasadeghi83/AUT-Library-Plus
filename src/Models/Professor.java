@@ -8,8 +8,9 @@ public class Professor extends Staff{
     }
 
     @Override
-    protected void afterSave() {
+    protected boolean afterSave() {
         super.afterSave();
         App.getAuthManager().assignRole(this, "professor");
+        return true;
     }
 }

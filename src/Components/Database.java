@@ -21,4 +21,10 @@ public class Database {
             results = new HashMap<>();
         return results;
     }
+
+    public void delete(Model model) {
+        String modelName = model.getMapName();
+        HashMap<String, Model> myModels = models.computeIfAbsent(modelName, k -> new HashMap<>());
+        myModels.remove(model.getId());
+    }
 }

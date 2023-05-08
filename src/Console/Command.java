@@ -12,7 +12,8 @@ public class Command {
             "add-category", "CategoryController",
             "add-student", "UserController",
             "add-staff", "UserController",
-            "add-manager", "UserController"
+            "add-manager", "UserController",
+            "remove-user", "UserController"
     );
     private Scanner input;
     private static String action;

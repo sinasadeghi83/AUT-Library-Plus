@@ -2,6 +2,7 @@ package Controllers;
 
 import Components.Model;
 import Components.Response;
+import Main.App;
 import Models.*;
 
 import java.util.List;
@@ -13,7 +14,8 @@ public class UserController extends BaseController{
         return Map.of(
                 "actionAddStudent", List.of("admin"),
                 "actionAddStaff", List.of("admin"),
-                "actionAddManager", List.of("admin")
+                "actionAddManager", List.of("admin"),
+                "actionRemoveUser", List.of("admin")
         );
     }
 
@@ -61,6 +63,19 @@ public class UserController extends BaseController{
             //Category.PARENT_NULL_ERR
             return new Response(2); //not-found
         }
+        return new Response(0); //success
+    }
+
+    public Response actionRemoveUser(List<String> args){
+        List<User> users = User.find(Map.of("id", args.get(0)));
+        if(users.size() == 0){
+            return new Response(2); //not-found
+        }
+        User user = users.get(0);
+        if(!App.getAuthManager().can("removeUser", Map.of("user", user))){
+            return new Response(3); //not-allowed
+        }
+        user.delete();
         return new Response(0); //success
     }
 }

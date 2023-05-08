@@ -8,8 +8,9 @@ public class Staff extends User{
     }
 
     @Override
-    protected void afterSave() {
+    protected boolean afterSave() {
         super.afterSave();
         App.getAuthManager().assignRole(this, "staff");
+        return true;
     }
 }
