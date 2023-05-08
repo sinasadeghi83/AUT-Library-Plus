@@ -11,13 +11,14 @@ public class Command {
             "add-library", "LibraryController"
     );
     private Scanner input;
-    private String action;
-    private ArrayList<String> args;
+    private static String action;
+    private static ArrayList<String> args;
 
-    private boolean hasNext = false;
+    private boolean hasNext = true;
 
     public Command(Scanner input){
         this.input = input;
+        args = new ArrayList<>();
     }
 
     public boolean hasNext() {
@@ -29,8 +30,9 @@ public class Command {
             String rawCmd = input.nextLine();
             String[] actionArgs = rawCmd.split("#");
             action = actionArgs[0];
+            args.clear();
             if (actionArgs.length > 1) {
-                Collections.addAll(this.args, actionArgs[1].split("\\|"));
+                Collections.addAll(args, actionArgs[1].split("\\|"));
             }
             if(action.equals("finish")){
                 hasNext = false;
@@ -38,20 +40,20 @@ public class Command {
         }
     }
 
-    public void run() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+    public void run() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException, ClassNotFoundException {
         if(!hasNext()){
             return;
         }
-        String parsedAction = this.parseAction();
-        String className = routes.get(action);
-        Class<? extends String> controller = className.getClass();
-        Method actionMethod = controller.getMethod(parsedAction, ArrayList.class);
+        String parsedAction = parseAction("action-"+action);
+        String className = "Controllers." + routes.get(action);
+        Class<?> controller = Class.forName(className);
+        Method actionMethod = controller.getMethod("runAction", String.class);
         Object controllerInstance = controller.getDeclaredConstructor().newInstance();
-        Response response = (Response) actionMethod.invoke(controllerInstance, args);
+        Response response = (Response) actionMethod.invoke(controllerInstance, parsedAction);
         System.out.println(response);
     }
 
-    private String parseAction() {
+    public static String parseAction(String action) {
         StringBuilder builder = new StringBuilder(action);
         int index;
         while ((index = builder.indexOf("-")) != -1){
@@ -59,5 +61,13 @@ public class Command {
             builder.setCharAt(index, Character.toUpperCase(builder.charAt(index)));
         }
         return builder.toString();
+    }
+
+    public static String getAction() {
+        return action;
+    }
+
+    public static ArrayList<String> getArgs() {
+        return args;
     }
 }
