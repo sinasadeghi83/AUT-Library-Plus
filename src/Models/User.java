@@ -16,6 +16,7 @@ public class User extends Model implements Auth {
     }
 
     public User(String id, String password, String firstName, String lastName, String nationalCode, String birthdate, String address) {
+        super();
         super.id = id;
         this.password = password;
         this.firstName = firstName;
