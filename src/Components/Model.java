@@ -14,9 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Model {
-    private static final String REQUIRED_ERR = "This field is required:";
-    private static final String DATE_ERR = "This field should be Date:";
-    private static final String YEAR_ERR = "This field should be Year:";
+    public static final String REQUIRED_ERR = "This field is required:";
+    public static final String DATE_ERR = "This field should be Date:";
+    public static final String YEAR_ERR = "This field should be Year:";
+    public static final String UNIQUE_ERR = "This field should be unique";
 
     protected String id;
 
@@ -107,8 +108,11 @@ public abstract class Model {
         }
     }
 
-    //TODO
-    private void evalUnique(Field field){
+    private void evalUnique(Field field) throws IllegalAccessException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException {
+        Object fieldData = field.get(this);
+        List<Model> models = find(this.getClass(), Map.of(field.getName(), fieldData));
+        if(models.size() > 0)
+            this.addError(field.getName(), UNIQUE_ERR);
     }
 
     private Object getFieldByGetter(Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
