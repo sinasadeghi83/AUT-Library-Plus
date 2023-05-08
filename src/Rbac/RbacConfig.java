@@ -15,11 +15,13 @@ public class RbacConfig {
 
     public static Map<String, List<String>> getRolesPerms(){
         return new HashMap<>(Map.of(
-                "admin", List.of("addLibrary")
+                "admin", List.of("addLibrary", "removeUser")
         ));
     }
 
     public static Map<String, Rule> getPermsRule(){
-        return new HashMap<>();
+        return new HashMap<>(Map.of(
+                "removeUser", new RemoveUserRule()
+        ));
     }
 }

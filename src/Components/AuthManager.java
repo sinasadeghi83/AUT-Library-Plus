@@ -68,7 +68,7 @@ public class AuthManager {
         return this.can(perm, new HashMap<>());
     }
 
-    public boolean can(String perm, HashMap<String, Object> params){
+    public boolean can(String perm, Map<String, Object> params){
         List<String> userRoles = usersRoles.get(this.getUserId());
         for (String userRole :
                 userRoles) {

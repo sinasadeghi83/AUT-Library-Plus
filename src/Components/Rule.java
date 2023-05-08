@@ -1,6 +1,7 @@
 package Components;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Rule {
     /**
@@ -11,5 +12,5 @@ public abstract class Rule {
      * @param params HashMap parameters passed to.
      * @return bool a value indicating whether the rule permits the role or permission it is associated with.
      */
-    public abstract boolean execute(Auth auth, String item, HashMap<String, Object> params);
+    public abstract boolean execute(Auth auth, String item, Map<String, Object> params);
 }
