@@ -44,16 +44,40 @@ public abstract class Model {
         return getName(this.getClass());
     }
 
-    protected void beforeSave(){};
-    protected void afterSave(){};
+    protected boolean beforeSave(){ return true; };
+    protected boolean afterSave(){ return true; };
 
     public boolean save(){
-        this.beforeSave();
+        if(!this.beforeSave())
+            return false;
         if(!this.validate()){
             return false;
         }
         App.getDb().save(this);
-        afterSave();
+        return this.afterSave();
+    }
+
+    public boolean delete(){
+        if(!this.beforeDelete())
+            return false;
+        try {
+            List<Model> models = find(this.getMapName(), this.getClass(), Map.of("id", this.id));
+            if(models.size() == 0){
+                return false;
+            }
+            App.getDb().delete(this);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
+        return this.afterDelete();
+    }
+
+    private boolean afterDelete() {
+        return true;
+    }
+
+    private boolean beforeDelete() {
         return true;
     }
 
