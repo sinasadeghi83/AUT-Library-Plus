@@ -40,6 +40,9 @@ public abstract class Model {
     public static String getName(Class classObj){
         return classObj.getName();
     };
+    public String getMapName(){
+        return getName(this.getClass());
+    }
 
     protected void beforeSave(){};
     protected void afterSave(){};
@@ -55,15 +58,20 @@ public abstract class Model {
     }
 
     public static List<Model> find(Class classObj, Map<String, Object> where) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        HashMap<String, Model> models = App.getDb().find(Model.getName(classObj));
+        return find(classObj.getName(), classObj, where);
+    }
+
+    public static List<Model> find(String mapName, Class classObj, Map<String, Object> where) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        HashMap<String, Model> models = App.getDb().find(mapName);
         List<Model> result = new ArrayList<>();
         for (Model model :
                 models.values()) {
             boolean isGood = true;
             for(String fieldName :
                     where.keySet()){
-                Method getter = classObj.getMethod(Command.parseAction("get-" + fieldName));
-                Object fieldValue = getter.invoke(model);
+                Field field = model.getFieldUpTo(model.getClass(), null, fieldName);
+                field.setAccessible(true);
+                Object fieldValue = field.get(model);
                 if(!fieldValue.equals(where.get(fieldName))){
                     isGood = false;
                     break;
@@ -115,7 +123,7 @@ public abstract class Model {
 
     private void evalUnique(Field field) throws IllegalAccessException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException {
         Object fieldData = field.get(this);
-        List<Model> models = find(this.getClass(), Map.of(field.getName(), fieldData));
+        List<Model> models = find(this.getMapName(), this.getClass(), Map.of(field.getName(), fieldData));
         if(models.size() > 0)
             this.addError(field.getName(), UNIQUE_ERR);
     }
