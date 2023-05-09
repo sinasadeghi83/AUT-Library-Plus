@@ -13,18 +13,17 @@ public class Resource extends Model {
     public static final String CATEGORY_NULL_ERR = "This field should not be null";
     public static final String UNIQUE_LIBRARY_ERR = "Resource should be unique in this library";
     public static final String LIBRARY_NULL_ERR = "Library with this libId doesn't exist";
-    protected String title, author, pub, year, copyCount, catId, libId;
+    protected String title, author, year, copyCount, catId, libId;
 
     public Resource() {
         super();
     }
 
-    public Resource(String id, String title, String author, String pub, String year, String copyCount, String catId, String libId) {
+    public Resource(String id, String title, String author, String year, String copyCount, String catId, String libId) {
         super();
         super.id = id;
         this.title = title;
         this.author = author;
-        this.pub = pub;
         this.year = year;
         this.copyCount = copyCount;
         this.catId = catId;
@@ -80,14 +79,6 @@ public class Resource extends Model {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public String getPub() {
-        return pub;
-    }
-
-    public void setPub(String pub) {
-        this.pub = pub;
     }
 
     public String getPrintYear() {
