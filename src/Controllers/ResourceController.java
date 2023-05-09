@@ -4,11 +4,10 @@ import Components.Response;
 import Main.App;
 import Models.Book;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class BookController extends BaseController{
+public class ResourceController extends BaseController{
     @Override
     public Map<String, List<String>> accessControl() {
         return Map.of(
