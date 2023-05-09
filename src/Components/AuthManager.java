@@ -14,17 +14,11 @@ import java.util.Map;
 public class AuthManager {
     private Auth auth = null;
     //User id -> roles
-    private Map<String, List<String>> usersRoles;
+    private static final Map<String, List<String>> usersRoles = RbacConfig.getUsersRoles();;
     //Roles -> permissions
-    private Map<String, List<String>> rolesPerms;
+    private static Map<String, List<String>> rolesPerms = RbacConfig.getRolesPerms();
     //Permssion -> Rule
-    private Map<String, Rule> permsRule;
-
-    public AuthManager(){
-        usersRoles = RbacConfig.getUsersRoles();
-        rolesPerms = RbacConfig.getRolesPerms();
-        permsRule = RbacConfig.getPermsRule();
-    }
+    private static Map<String, Rule> permsRule = RbacConfig.getPermsRule();
 
     public String getUserId(){
         return auth.getId();
@@ -35,7 +29,7 @@ public class AuthManager {
     }
 
     public void assignRole(Auth auth, String role){
-        List<String> userRoles = this.usersRoles.computeIfAbsent(auth.getId(), k -> new ArrayList<>());
+        List<String> userRoles = usersRoles.computeIfAbsent(auth.getId(), k -> new ArrayList<>());
 //        List<String> userRoles = this.usersRoles.get(auth.getId());
 //        if(userRoles == null){
 //            userRoles = new ArrayList<>();
