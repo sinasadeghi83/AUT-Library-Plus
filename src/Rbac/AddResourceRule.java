@@ -8,7 +8,7 @@ import Models.Manager;
 
 import java.util.Map;
 
-public class AddBookRule extends Rule {
+public class AddResourceRule extends Rule {
     @Override
     public boolean execute(Auth auth, String item, Map<String, Object> params) {
         try {

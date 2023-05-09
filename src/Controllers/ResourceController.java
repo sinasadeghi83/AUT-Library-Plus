@@ -26,7 +26,7 @@ public class ResourceController extends BaseController{
             }
             return new Response(2); //not-found
         }
-        if(!App.getAuthManager().can("addBook", Map.of("libraryId", book.getLibId()))){
+        if(!App.getAuthManager().can("addResource", Map.of("libraryId", book.getLibId()))){
             return new Response(5); //permission-denied
         }
         book.save();
