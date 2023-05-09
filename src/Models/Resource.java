@@ -37,7 +37,6 @@ public abstract class Resource extends Model {
                 "id", new String[]{"Required", "UniqueLibrary"},
                 "title", new String[]{"Required"},
                 "author", new String[]{"Required"},
-                "pub", new String[]{"Required"},
                 "year", new String[]{"Required"},
                 "copyCount", new String[]{"Required"},
                 "catId", new String[]{"Required", "ExistCategory"},
