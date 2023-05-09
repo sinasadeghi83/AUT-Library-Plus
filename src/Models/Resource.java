@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Resource extends Model {
+public abstract class Resource extends Model {
     public static final String CATEGORY_NULL_ERR = "This field should not be null";
     public static final String UNIQUE_LIBRARY_ERR = "Resource should be unique in this library";
     public static final String LIBRARY_NULL_ERR = "Library with this libId doesn't exist";
