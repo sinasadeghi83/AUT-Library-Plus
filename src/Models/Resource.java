@@ -13,13 +13,14 @@ public abstract class Resource extends Model {
     public static final String CATEGORY_NULL_ERR = "This field should not be null";
     public static final String UNIQUE_LIBRARY_ERR = "Resource should be unique in this library";
     public static final String LIBRARY_NULL_ERR = "Library with this libId doesn't exist";
-    protected String title, author, year, copyCount, catId, libId;
+    protected String title, author, year, catId, libId;
+    protected int copyCount;
 
     public Resource() {
         super();
     }
 
-    public Resource(String id, String title, String author, String year, String copyCount, String catId, String libId) {
+    public Resource(String id, String title, String author, String year, int copyCount, String catId, String libId) {
         super();
         super.id = id;
         this.title = title;
@@ -89,11 +90,11 @@ public abstract class Resource extends Model {
         this.year = year;
     }
 
-    public String getCopyCount() {
+    public int getCopyCount() {
         return copyCount;
     }
 
-    public void setCopyCount(String copyCount) {
+    public void setCopyCount(int copyCount) {
         this.copyCount = copyCount;
     }
 

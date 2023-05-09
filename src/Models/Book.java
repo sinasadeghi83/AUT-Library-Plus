@@ -14,7 +14,7 @@ public class Book extends Resource {
     public Book(){
         super();
     }
-    public Book(String id, String title, String author, String pub, String year, String copyCount, String catId, String libId) {
+    public Book(String id, String title, String author, String pub, String year, int copyCount, String catId, String libId) {
         super(id, title, author, year, copyCount, catId, libId);
 
         this.pub = pub;
