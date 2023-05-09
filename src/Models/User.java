@@ -27,6 +27,7 @@ public class User extends Model implements Auth {
         this.address = address;
     }
 
+    @Override
     public Map<String, String[]> rules(){
         return Map.of(
                 "id", new String[]{ "Required", "Unique" },
@@ -66,7 +67,7 @@ public class User extends Model implements Auth {
 
     @Override
     public Auth authenticate() throws InvalidPasswordException, ModelNotFoundException {
-        List<User> models = this.find(Map.of(
+        List<User> models = find(Map.of(
                 "id", this.getId()
         ));
         if(models.size() == 0)
