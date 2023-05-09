@@ -8,6 +8,7 @@ public class Response {
             "not-found", //id: 2
             "not-allowed", //id: 3
             "invalid-pass", //id: 4
+            "permission-denied" //id: 5
     };
     private int id;
     private String message;
