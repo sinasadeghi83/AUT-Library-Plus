@@ -14,7 +14,8 @@ public class Command {
             "add-staff", "UserController",
             "add-manager", "UserController",
             "remove-user", "UserController",
-            "add-book", "ResourceController"
+            "add-book", "ResourceController",
+            "add-thesis", "ResourceController"
     );
     private Scanner input;
     private static String action;

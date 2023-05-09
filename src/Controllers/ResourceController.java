@@ -33,4 +33,20 @@ public class ResourceController extends BaseController{
         return new Response(0); //success
     }
 
+    public Response actionAddThesis(List<String> args){
+        Thesis thesis = new Thesis(args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5), args.get(6));
+        if(!thesis.validate()){
+            String zeroError = (String) thesis.getErrors().values().toArray()[0];
+            if(zeroError.equals(Book.UNIQUE_LIBRARY_ERR)){
+                return new Response(1); //duplicate-id
+            }
+            return new Response(2); //not-found
+        }
+        if(!App.getAuthManager().can("addResource", Map.of("libraryId", thesis.getLibId()))){
+            return new Response(5); //permission-denied
+        }
+        thesis.save();
+        return new Response(0); //success
+    }
+
 }
