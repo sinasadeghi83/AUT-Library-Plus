@@ -13,7 +13,8 @@ public class Command {
             "add-student", "UserController",
             "add-staff", "UserController",
             "add-manager", "UserController",
-            "remove-user", "UserController"
+            "remove-user", "UserController",
+            "add-book", "BookController"
     );
     private Scanner input;
     private static String action;

@@ -9,19 +9,21 @@ import java.util.Map;
 public class RbacConfig {
     public static Map<String, List<String>> getUsersRoles(){
         return new HashMap<>(Map.of(
-                "admin", List.of("admin")
+                "admin", List.of("admin", "manager")
         ));
     }
 
     public static Map<String, List<String>> getRolesPerms(){
         return new HashMap<>(Map.of(
-                "admin", List.of("addLibrary", "removeUser")
+                "admin", List.of("addLibrary", "removeUser"),
+                "manager", List.of("addBook")
         ));
     }
 
     public static Map<String, Rule> getPermsRule(){
         return new HashMap<>(Map.of(
-                "removeUser", new RemoveUserRule()
+                "removeUser", new RemoveUserRule(),
+                "addBook", new AddBookRule()
         ));
     }
 }

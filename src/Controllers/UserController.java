@@ -24,11 +24,9 @@ public class UserController extends BaseController{
         boolean isSaved = student.save();
         if(!isSaved){
             if(student.getErrors().containsValue(Student.UNIQUE_ERR)){
-                //Category.UNIQUE_ERR
+                //UNIQUE_ERR
                 return new Response(1); //dup-id
             }
-            //Category.PARENT_NULL_ERR
-            return new Response(2); //not-found
         }
         return new Response(0); //success
     }
@@ -42,26 +40,22 @@ public class UserController extends BaseController{
         }
         boolean isSaved = staff.save();
         if(!isSaved){
-            if(staff.getErrors().containsValue(Student.UNIQUE_ERR)){
-                //Category.UNIQUE_ERR
+            if(staff.getErrors().containsValue(Staff.UNIQUE_ERR)){
+                //Staff.UNIQUE_ERR
                 return new Response(1); //dup-id
             }
-            //Category.PARENT_NULL_ERR
-            return new Response(2); //not-found
         }
         return new Response(0); //success
     }
 
     public Response actionAddManager(List<String> args){
-        Student student = new Student(args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5), args.get(6));
-        boolean isSaved = student.save();
+        Manager manager = new Manager(args.get(0), args.get(1), args.get(2), args.get(3), args.get(4), args.get(5), args.get(6), args.get(7));
+        boolean isSaved = manager.save();
         if(!isSaved){
-            if(student.getErrors().containsValue(Student.UNIQUE_ERR)){
-                //Category.UNIQUE_ERR
+            if(manager.getErrors().containsValue(Manager.UNIQUE_ERR)){
+                //Manager.UNIQUE_ERR
                 return new Response(1); //dup-id
             }
-            //Category.PARENT_NULL_ERR
-            return new Response(2); //not-found
         }
         return new Response(0); //success
     }
