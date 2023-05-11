@@ -89,4 +89,23 @@ public class ResourceController extends BaseController{
         return new Response(0); //success
     }
 
+    public Response actionRemoveResource(List<String> args) {
+        String resId = args.get(0), libId = args.get(1);
+        List<Resource> resources = Resource.find(Map.of(
+                "resId", resId,
+                "libId", libId
+        ));
+
+        if(resources.size() == 0){
+            return new Response(2); //not-found
+        }
+        boolean userCan = App.getAuthManager().can("changeResource", Map.of("libraryId", libId));
+        if(!userCan){
+            return new Response(5); //permission-denied
+        }
+        Resource resource = resources.get(0);
+        resource.delete();
+        return new Response(0); //success
+    }
+
 }

@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 public class Command {
-    private final Map<String, String> routes = Map.of(
+    private final Map<String, String> routes = new HashMap<>(Map.of(
             "add-library", "LibraryController",
             "add-category", "CategoryController",
             "add-student", "UserController",
@@ -18,7 +18,7 @@ public class Command {
             "add-thesis", "ResourceController",
             "add-selling-book", "ResourceController",
             "add-ganjineh-book", "ResourceController"
-    );
+    ));
     private Scanner input;
     private static String action;
     private static ArrayList<String> args;
@@ -26,6 +26,9 @@ public class Command {
     private boolean hasNext = true;
 
     public Command(Scanner input){
+        routes.putAll(Map.of(
+                "remove-resource", "ResourceController"
+        ));
         this.input = input;
         args = new ArrayList<>();
     }
