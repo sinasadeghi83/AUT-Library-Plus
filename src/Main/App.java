@@ -3,10 +3,12 @@ package Main;
 import Components.Auth;
 import Components.AuthManager;
 import Components.Database;
+import Components.Model;
 import Console.Command;
 import Models.User;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -21,6 +23,20 @@ public class App {
             authManager = new AuthManager();
             command.next();
             command.run();
+        }
+    }
+
+    private static void printAll(){
+        HashMap<String, HashMap<String, Model>> models = getDb().all();
+        for (String modelName :
+                models.keySet()) {
+            System.out.println("Model Name: " + modelName);
+            for (Model model :
+                    models.get(modelName).values()) {
+                System.out.println("\t" + "id: " + model.getId());
+                System.out.println("\t" + "Class: " + model.getClass());
+                System.out.println("\t" + "Model: " + model);
+            }
         }
     }
 
