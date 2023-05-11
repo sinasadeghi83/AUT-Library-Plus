@@ -89,29 +89,34 @@ public abstract class Model {
         return true;
     }
 
-    public static List<Model> find(Class classObj, Map<String, Object> where) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public static List<Model> find(Class classObj, Map<String, Object> where){
         return find(classObj.getName(), classObj, where);
     }
 
-    public static List<Model> find(String mapName, Class classObj, Map<String, Object> where) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public static List<Model> find(String mapName, Class classObj, Map<String, Object> where) {
+
         HashMap<String, Model> models = App.getDb().find(mapName);
         List<Model> result = new ArrayList<>();
-        for (Model model :
-                models.values()) {
-            boolean isGood = true;
-            for(String fieldName :
-                    where.keySet()){
-                Field field = model.getFieldUpTo(model.getClass(), null, fieldName);
-                field.setAccessible(true);
-                Object fieldValue = field.get(model);
-                if(!fieldValue.equals(where.get(fieldName))){
-                    isGood = false;
-                    break;
+        try {
+            for (Model model :
+                    models.values()) {
+                boolean isGood = true;
+                for (String fieldName :
+                        where.keySet()) {
+                    Field field = model.getFieldUpTo(model.getClass(), null, fieldName);
+                    field.setAccessible(true);
+                    Object fieldValue = field.get(model);
+                    if (!fieldValue.equals(where.get(fieldName))) {
+                        isGood = false;
+                        break;
+                    }
+                }
+                if (isGood) {
+                    result.add(model);
                 }
             }
-            if(isGood){
-                result.add(model);
-            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
         return result;
     }
