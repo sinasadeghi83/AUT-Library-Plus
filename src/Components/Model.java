@@ -54,7 +54,11 @@ public abstract class Model {
             return false;
         }
         App.getDb().save(this);
-        return this.afterSave();
+        if(!this.afterSave()){
+            App.getDb().delete(this);
+            return false;
+        }
+        return true;
     }
 
     public boolean delete(){
@@ -70,7 +74,11 @@ public abstract class Model {
             System.err.println(e.getMessage());
             return false;
         }
-        return this.afterDelete();
+        if(!this.afterDelete()){
+            App.getDb().save(this);
+            return false;
+        }
+        return true;
     }
 
     private boolean afterDelete() {

@@ -27,4 +27,8 @@ public class Database {
         HashMap<String, Model> myModels = models.computeIfAbsent(modelName, k -> new HashMap<>());
         myModels.remove(model.getId());
     }
+
+    public HashMap<String, HashMap<String, Model>> all(){
+        return this.models;
+    }
 }

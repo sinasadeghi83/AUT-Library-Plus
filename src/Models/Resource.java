@@ -1,6 +1,5 @@
 package Models;
 
-import Components.Auth;
 import Components.Model;
 
 import java.lang.reflect.Field;
@@ -13,7 +12,7 @@ public abstract class Resource extends Model {
     public static final String CATEGORY_NULL_ERR = "This field should not be null";
     public static final String UNIQUE_LIBRARY_ERR = "Resource should be unique in this library";
     public static final String LIBRARY_NULL_ERR = "Library with this libId doesn't exist";
-    protected String title, author, year, catId, libId;
+    protected String resId, title, author, year, catId, libId;
     protected int copyCount;
 
     public Resource() {
@@ -22,7 +21,8 @@ public abstract class Resource extends Model {
 
     public Resource(String id, String title, String author, String year, int copyCount, String catId, String libId) {
         super();
-        super.id = id;
+        super.id = id +  "-" + libId;
+        this.resId = id;
         this.title = title;
         this.author = author;
         this.year = year;
@@ -34,7 +34,8 @@ public abstract class Resource extends Model {
     @Override
     public Map<String, String[]> rules() {
         return Map.of(
-                "id", new String[]{"Required", "UniqueLibrary"},
+                "id", new String[]{"Required", "Unique"},
+                "resId", new String[]{"Required", "UniqueLibrary"},
                 "title", new String[]{"Required"},
                 "author", new String[]{"Required"},
                 "year", new String[]{"Required"},
@@ -118,8 +119,9 @@ public abstract class Resource extends Model {
                 field.getName(), (String) field.get(this),
                 "libId", (String) this.libId
         ));
-        if(resources.size() > 0)
+        if(resources.size() > 0) {
             this.addError(field.getName(), UNIQUE_LIBRARY_ERR);
+        }
     }
 
     public void evalExistCategory(Field field) throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
@@ -139,5 +141,33 @@ public abstract class Resource extends Model {
         ));
         if(models.size() == 0)
             this.addError(field.getName(), LIBRARY_NULL_ERR);
+    }
+
+    public String getResId() {
+        return resId;
+    }
+
+    public void setResId(String resId) {
+        this.resId = resId;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    @Override
+    public String toString() {
+        return "Resource{" +
+                "title='" + title + '\'' +
+                ", author='" + author + '\'' +
+                ", year='" + year + '\'' +
+                ", catId='" + catId + '\'' +
+                ", libId='" + libId + '\'' +
+                ", copyCount=" + copyCount +
+                '}';
     }
 }
