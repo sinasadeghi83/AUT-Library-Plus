@@ -27,7 +27,8 @@ public class Command {
 
     public Command(Scanner input){
         routes.putAll(Map.of(
-                "remove-resource", "ResourceController"
+                "remove-resource", "ResourceController",
+                "borrow", "LibraryController"
         ));
         this.input = input;
         args = new ArrayList<>();

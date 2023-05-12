@@ -18,6 +18,7 @@ public abstract class Model {
     public static final String DATE_ERR = "This field should be Date:";
     public static final String YEAR_ERR = "This field should be Year:";
     public static final String UNIQUE_ERR = "This field should be unique";
+    public static final String HOUR_ERR = "This field should be hour";
 
     protected String id;
 
@@ -149,6 +150,13 @@ public abstract class Model {
         }
     }
 
+    private void evalHour(Field field) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        String hourStr = (String) field.get(this);
+        if(!isValidHour(hourStr)) {
+            this.addError(field.getName(), HOUR_ERR);
+        }
+    }
+
     private void evalYear(Field field) throws IllegalAccessException {
         String yearStr = (String) field.get(this);
         try {
@@ -180,8 +188,19 @@ public abstract class Model {
         return errors.size() == 0;
     }
 
+    private boolean isValidHour(String inDate) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        dateFormat.setLenient(true);
+        try {
+            dateFormat.parse(inDate.trim());
+        } catch (ParseException pe) {
+            return false;
+        }
+        return true;
+    }
+
     private boolean isValidDate(String inDate) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:ms");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         dateFormat.setLenient(true);
         try {
             dateFormat.parse(inDate.trim());
@@ -246,5 +265,15 @@ public abstract class Model {
 
     public Map<String, String> getErrors() {
         return errors;
+    }
+    
+    public String errorToString(){
+        StringBuilder errors = new StringBuilder(this.getMapName() + " Errors{\n");
+        for (String fieldName :
+                this.errors.keySet()) {
+            errors.append(fieldName).append(": ").append(this.errors.get(fieldName)).append("\n");
+        }
+        errors.append("}");
+        return errors.toString();
     }
 }
