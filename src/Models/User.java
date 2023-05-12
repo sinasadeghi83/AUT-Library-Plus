@@ -83,13 +83,23 @@ public class User extends Model implements Auth {
     public void enterPassword(String password) {
         setPassword(password);
     }
-
+    @Override
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Fine getFine(){
+        List<Model> fines = Model.find(Fine.class, Map.of(
+                "userId", this.getId()
+        ));
+
+        if(fines.size() == 0)
+            return null;
+        return (Fine)fines.get(0);
     }
 
     public String getFirstName() {
