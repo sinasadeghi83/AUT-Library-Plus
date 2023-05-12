@@ -24,6 +24,7 @@ public class App {
             command.next();
             command.run();
         }
+//        printAll();
     }
 
     private static void printAll(){
