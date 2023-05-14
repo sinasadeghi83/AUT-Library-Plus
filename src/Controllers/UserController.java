@@ -56,6 +56,7 @@ public class UserController extends BaseController{
                 //Manager.UNIQUE_ERR
                 return new Response(1); //dup-id
             }
+            return new Response(2); //not-found
         }
         return new Response(0); //success
     }
